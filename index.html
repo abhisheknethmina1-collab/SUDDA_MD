@@ -2,408 +2,755 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUDDA-MD | WhatsApp Bot</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<title>SUDDA-MD | WhatsApp Bot</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<style>
+:root {
+    --bg: #080808;
+    --card: #141414;
+    --red: #ff2638;
+    --text: #fff;
+    --muted: #999;
+    --border: rgba(255,255,255,.09);
+}
 
-        body {
-            background: #080808;
-            color: white;
-            min-height: 100vh;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-        .welcome {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 25px;
-            background:
-                radial-gradient(circle at center, #350008 0%, #080808 65%);
-        }
+body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+}
 
-        .logo {
-            font-size: 42px;
-            font-weight: 900;
-            letter-spacing: 3px;
-            color: white;
-            text-shadow: 0 0 20px #ff2638;
-        }
+button, input {
+    font: inherit;
+}
 
-        .logo span {
-            color: #ff2638;
-        }
+button {
+    cursor: pointer;
+}
 
-        .welcome p {
-            color: #aaa;
-            margin-top: 15px;
-            font-size: 14px;
-            letter-spacing: 2px;
-        }
+.hidden {
+    display: none !important;
+}
 
-        button {
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+}
 
-        .connect-btn {
-            margin-top: 40px;
-            padding: 16px 42px;
-            background: #ff2638;
-            color: white;
-            border-radius: 6px;
-            font-size: 15px;
-            letter-spacing: 1px;
-            box-shadow: 0 0 25px #ff263855;
-        }
+.logo {
+    font-size: clamp(38px, 8vw, 65px);
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-shadow: 0 0 30px #ff263855;
+}
 
-        .connect-btn:hover {
-            background: #d90019;
-            transform: scale(1.05);
-        }
+.logo span {
+    color: var(--red);
+}
 
-        .connection {
-            display: none;
-            min-height: 100vh;
-            padding: 35px 18px;
-            text-align: center;
-        }
+.tagline {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 4px;
+    margin-top: 15px;
+}
 
-        .header {
-            font-size: 27px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+.primary-btn {
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 15px 35px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: .2s;
+    box-shadow: 0 0 25px #ff263833;
+}
 
-        .header span {
-            color: #ff2638;
-        }
+.primary-btn:hover {
+    background: #d90019;
+    transform: translateY(-2px);
+}
 
-        .subtitle {
-            color: #888;
-            font-size: 13px;
-            margin-bottom: 30px;
-        }
+.primary-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+}
 
-        .status {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #191919;
-            border: 1px solid #333;
-            border-radius: 30px;
-            color: #ff5967;
-            font-size: 13px;
-            margin-bottom: 25px;
-        }
+/* WELCOME */
 
-        .card {
-            max-width: 430px;
-            width: 100%;
-            margin: 15px auto;
-            padding: 25px;
-            background: #111;
-            border: 1px solid #292929;
-            border-radius: 12px;
-        }
+#welcomePage {
+    flex-direction: column;
+    text-align: center;
+    background: radial-gradient(ellipse at center, #350009, #080808 70%);
+}
 
-        .card h3 {
-            color: #ff2638;
-            margin-bottom: 18px;
-        }
+#welcomePage .primary-btn {
+    margin-top: 40px;
+}
 
-        .qr-area {
-            width: 220px;
-            height: 220px;
-            margin: auto;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
+/* AUTH */
 
-        .qr-area img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
+.panel {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 30px;
+    box-shadow: 0 20px 70px #000;
+}
 
-        .qr-placeholder {
-            color: #555;
-            font-size: 13px;
-            padding: 15px;
-        }
+.panel h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
 
-        .pairing-code {
-            font-size: 25px;
-            font-weight: bold;
-            letter-spacing: 5px;
-            color: white;
-            padding: 18px;
-            background: #080808;
-            border: 1px dashed #ff2638;
-            border-radius: 7px;
-            margin-top: 10px;
-            min-height: 65px;
-        }
+.panel h2 span {
+    color: var(--red);
+}
 
-        .phone-input {
-            width: 100%;
-            padding: 14px;
-            margin-top: 15px;
-            background: #080808;
-            border: 1px solid #333;
-            border-radius: 6px;
-            color: white;
-            outline: none;
-            font-size: 15px;
-        }
+.description {
+    color: var(--muted);
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 25px;
+}
 
-        .phone-input:focus {
-            border-color: #ff2638;
-        }
+.field {
+    margin-bottom: 16px;
+}
 
-        .action-btn {
-            width: 100%;
-            padding: 14px;
-            margin-top: 15px;
-            background: #ff2638;
-            color: white;
-            border-radius: 6px;
-            font-size: 14px;
-        }
+.field label {
+    display: block;
+    font-size: 12px;
+    color: #ccc;
+    margin-bottom: 8px;
+}
 
-        .action-btn:hover {
-            background: #d90019;
-        }
+.field input,
+.phone {
+    width: 100%;
+    background: #080808;
+    border: 1px solid #333;
+    color: white;
+    padding: 14px;
+    border-radius: 6px;
+    outline: none;
+}
 
-        .back-btn {
-            margin-top: 25px;
-            background: transparent;
-            color: #aaa;
-            font-size: 13px;
-        }
+.field input:focus,
+.phone:focus {
+    border-color: var(--red);
+}
 
-        .back-btn:hover {
-            color: #ff2638;
-        }
+.full-btn {
+    width: 100%;
+    margin-top: 10px;
+}
 
-        .note {
-            color: #666;
-            font-size: 12px;
-            margin-top: 15px;
-            line-height: 1.6;
-        }
+.switch-text {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 20px;
+}
 
-        @media (max-width: 400px) {
-            .logo {
-                font-size: 32px;
-            }
+.switch-text button,
+.back-link {
+    background: none;
+    border: none;
+    color: var(--red);
+    font-weight: bold;
+}
 
-            .card {
-                padding: 18px;
-            }
-        }
-    </style>
+.back-link {
+    display: block;
+    margin: 22px auto 0;
+    color: var(--muted);
+    font-weight: normal;
+}
+
+.message {
+    min-height: 18px;
+    margin-top: 13px;
+    text-align: center;
+    color: var(--red);
+    font-size: 13px;
+}
+
+/* CONNECTION */
+
+#connectionPage {
+    display: block;
+    padding-top: 45px;
+    padding-bottom: 45px;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    margin: auto;
+}
+
+.top {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.top .logo {
+    font-size: 35px;
+}
+
+.top p {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-top: 10px;
+}
+
+.status {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 18px;
+    border: 1px solid #444;
+    background: #151515;
+    border-radius: 30px;
+    font-size: 12px;
+    color: #ff5967;
+}
+
+.status.connected {
+    color: #38dc89;
+    border-color: #38dc8955;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+}
+
+.card h3 {
+    color: var(--red);
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.qr-box {
+    width: 220px;
+    height: 220px;
+    max-width: 100%;
+    margin: auto;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.qr-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.placeholder {
+    color: #555;
+    font-size: 12px;
+    padding: 15px;
+}
+
+.help {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 17px;
+}
+
+.pair-code {
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #080808;
+    border: 1px dashed var(--red);
+    border-radius: 7px;
+    margin-top: 18px;
+    font-size: 23px;
+    font-weight: bold;
+    letter-spacing: 4px;
+}
+
+.disconnect-btn {
+    margin-top: 25px;
+    padding: 13px 25px;
+    border: 1px solid var(--red);
+    color: var(--red);
+    background: transparent;
+    border-radius: 6px;
+}
+
+.disconnect-btn:hover {
+    background: var(--red);
+    color: white;
+}
+
+.footer {
+    text-align: center;
+    color: #555;
+    font-size: 11px;
+    margin-top: 35px;
+}
+
+@media(max-width: 650px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: 23px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <!-- WELCOME PAGE -->
-    <section class="welcome" id="welcomePage">
-        <div class="logo">SUDDA<span>-MD</span></div>
+<!-- WELCOME PAGE -->
+<section class="page" id="welcomePage">
+    <div class="logo">SUDDA<span>-MD</span></div>
+    <p class="tagline">ADVANCED WHATSAPP BOT</p>
+    <button class="primary-btn" onclick="openBot()">
+        CONNECT BOT
+    </button>
+</section>
 
-        <p>ADVANCED WHATSAPP BOT</p>
+<!-- LOGIN / REGISTER -->
+<section class="page hidden" id="authPage">
+    <div class="panel">
+        <h2>SUDDA<span>-MD</span></h2>
+        <p class="description" id="authDescription">
+            Login to connect your WhatsApp account.
+        </p>
 
-        <button class="connect-btn" onclick="openConnection()">
-            CONNECT BOT
-        </button>
-    </section>
-
-
-    <!-- CONNECTION PAGE -->
-    <section class="connection" id="connectionPage">
-
-        <div class="header">
-            SUDDA<span>-MD</span>
-        </div>
-
-        <div class="subtitle">
-            CONNECT YOUR WHATSAPP ACCOUNT
-        </div>
-
-        <div class="status" id="status">
-            ● WAITING FOR CONNECTION
-        </div>
-
-        <!-- QR CODE -->
-        <div class="card">
-            <h3>SCAN QR CODE</h3>
-
-            <div class="qr-area" id="qrArea">
-                <div class="qr-placeholder">
-                    QR CODE WILL APPEAR HERE
-                </div>
+        <form id="authForm">
+            <div class="field hidden" id="nameField">
+                <label>YOUR NAME</label>
+                <input id="name" type="text" maxlength="40"
+                    placeholder="Enter your name">
             </div>
 
-            <p class="note">
-                Open WhatsApp → Linked Devices → Link a Device
-            </p>
-        </div>
+            <div class="field">
+                <label>PHONE NUMBER</label>
+                <input id="authPhone" type="tel"
+                    placeholder="Country code + phone number" required>
+            </div>
 
-        <!-- PAIRING CODE -->
-        <div class="card">
-            <h3>PAIRING CODE</h3>
+            <div class="field">
+                <label>PASSWORD</label>
+                <input id="authPassword" type="password"
+                    minlength="10" maxlength="128"
+                    placeholder="Enter your password" required>
+            </div>
 
-            <input
-                type="tel"
-                class="phone-input"
-                id="phoneNumber"
-                placeholder="Enter WhatsApp number with country code"
-            >
-
-            <button class="action-btn" onclick="generatePairingCode()">
-                GENERATE PAIRING CODE
+            <button class="primary-btn full-btn" id="authSubmit">
+                LOGIN
             </button>
+        </form>
 
-            <div class="pairing-code" id="pairingCode">
-                --------
+        <div class="message" id="authMessage"></div>
+
+        <p class="switch-text">
+            <span id="switchLabel">Don't have an account?</span>
+            <button type="button" onclick="toggleAuth()" id="switchButton">
+                REGISTER
+            </button>
+        </p>
+
+        <button class="back-link" onclick="showPage('welcomePage')">
+            ← BACK
+        </button>
+    </div>
+</section>
+
+<!-- WHATSAPP CONNECTION -->
+<section class="page hidden" id="connectionPage">
+    <div class="container">
+
+        <div class="top">
+            <div class="logo">SUDDA<span>-MD</span></div>
+            <p>WHATSAPP CONNECTION</p>
+            <div class="status" id="connectionStatus">
+                ● DISCONNECTED
             </div>
-
-            <p class="note">
-                Enter your number with country code.
-            </p>
         </div>
 
-        <button class="back-btn" onclick="goBack()">
-            ← BACK TO HOME
-        </button>
+        <div class="cards">
 
-    </section>
+            <div class="card">
+                <h3>SCAN QR CODE</h3>
 
+                <div class="qr-box" id="qrBox">
+                    <div class="placeholder">
+                        QR CODE WILL APPEAR HERE
+                    </div>
+                </div>
 
-    <script>
-        const welcomePage = document.getElementById("welcomePage");
-        const connectionPage = document.getElementById("connectionPage");
+                <p class="help">
+                    Open WhatsApp → Linked Devices →
+                    Link a Device. Scan the QR code.
+                </p>
+            </div>
 
-        let statusTimer = null;
+            <div class="card">
+                <h3>PAIRING CODE</h3>
 
-        function openConnection() {
-            welcomePage.style.display = "none";
-            connectionPage.style.display = "block";
+                <input class="phone" id="pairPhone" type="tel"
+                    placeholder="WhatsApp number with country code">
 
-            loadConnectionStatus();
+                <button class="primary-btn full-btn"
+                    id="pairButton" onclick="startPairing()">
+                    GENERATE PAIRING CODE
+                </button>
 
-            if (!statusTimer) {
-                statusTimer = setInterval(loadConnectionStatus, 3000);
-            }
+                <div class="pair-code" id="pairCode">
+                    --------
+                </div>
+
+                <p class="help">
+                    Enter your WhatsApp number with country code.
+                    Open Linked Devices and choose Link with phone number.
+                </p>
+            </div>
+
+        </div>
+
+        <div style="text-align:center">
+            <button class="disconnect-btn" onclick="disconnectBot()">
+                DISCONNECT WHATSAPP
+            </button>
+        </div>
+
+        <div class="message" id="connectionMessage"></div>
+
+        <div class="footer">
+            SUDDA-MD MULTI-USER WHATSAPP SYSTEM
+        </div>
+
+    </div>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let registerMode = false;
+let statusTimer = null;
+let starting = false;
+
+function showPage(id) {
+    ["welcomePage", "authPage", "connectionPage"].forEach(page => {
+        $(page).classList.add("hidden");
+    });
+
+    $(id).classList.remove("hidden");
+}
+
+async function api(url, options = {}) {
+    const response = await fetch(url, {
+        credentials: "same-origin",
+        cache: "no-store",
+        ...options,
+        headers: {
+            ...(options.headers || {}),
+            "Content-Type": "application/json"
+        }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error || data.message || "Request failed.");
+    }
+
+    return data;
+}
+
+async function openBot() {
+    showPage("authPage");
+    $("authMessage").textContent = "Checking account...";
+
+    try {
+        await api("/api/auth/check");
+        $("authMessage").textContent = "";
+        await enterConnection();
+    } catch (error) {
+        $("authMessage").textContent = "";
+    }
+}
+
+function toggleAuth() {
+    registerMode = !registerMode;
+
+    $("nameField").classList.toggle("hidden", !registerMode);
+
+    $("authDescription").textContent = registerMode
+        ? "Create your SUDDA-MD account."
+        : "Login to connect your WhatsApp account.";
+
+    $("authSubmit").textContent = registerMode
+        ? "CREATE ACCOUNT"
+        : "LOGIN";
+
+    $("switchLabel").textContent = registerMode
+        ? "Already have an account?"
+        : "Don't have an account?";
+
+    $("switchButton").textContent = registerMode
+        ? "LOGIN"
+        : "REGISTER";
+
+    $("authMessage").textContent = "";
+}
+
+$("authForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const button = $("authSubmit");
+    button.disabled = true;
+    button.textContent = "PLEASE WAIT...";
+    $("authMessage").textContent = "";
+
+    try {
+        const payload = {
+            phone: $("authPhone").value.trim(),
+            password: $("authPassword").value
+        };
+
+        let result;
+
+        if (registerMode) {
+            payload.name = $("name").value.trim() || "SUDDA User";
+
+            result = await api("/api/auth/register", {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
+        } else {
+            result = await api("/api/auth/login", {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
         }
 
-        function goBack() {
-            connectionPage.style.display = "none";
-            welcomePage.style.display = "flex";
-
-            if (statusTimer) {
-                clearInterval(statusTimer);
-                statusTimer = null;
-            }
+        if (result.success) {
+            $("authMessage").textContent = "";
+            await enterConnection();
+        } else {
+            throw new Error(result.message || "Authentication failed.");
         }
 
-        async function loadConnectionStatus() {
-            try {
-                const response = await fetch("/api/connection", {
-                    cache: "no-store"
-                });
+    } catch (error) {
+        $("authMessage").textContent = error.message;
+    } finally {
+        button.disabled = false;
+        button.textContent = registerMode
+            ? "CREATE ACCOUNT"
+            : "LOGIN";
+    }
+});
 
-                if (!response.ok) return;
+async function enterConnection() {
+    showPage("connectionPage");
 
-                const data = await response.json();
+    await refreshStatus();
 
-                const status = document.getElementById("status");
-                const qrArea = document.getElementById("qrArea");
-                const pairingCode = document.getElementById("pairingCode");
+    if (!statusTimer) {
+        statusTimer = setInterval(refreshStatus, 2500);
+    }
 
-                if (data.status === "CONNECTED") {
-                    status.textContent = "● WHATSAPP CONNECTED";
-                    status.style.color = "#35df83";
-                } else {
-                    status.textContent = "● WAITING FOR CONNECTION";
-                    status.style.color = "#ff5967";
-                }
+    if (!starting &&
+        $("connectionStatus").textContent.includes("DISCONNECTED")) {
+        await startQR();
+    }
+}
 
-                if (data.qr) {
-                    qrArea.innerHTML = "";
+function setStatus(status) {
+    const element = $("connectionStatus");
+    element.textContent = "● " + status;
 
-                    const img = document.createElement("img");
+    element.classList.toggle(
+        "connected",
+        status === "CONNECTED"
+    );
+}
 
-                    img.src = data.qr.startsWith("data:")
-                        ? data.qr
-                        : "data:image/png;base64," + data.qr;
+function displayQR(image) {
+    const box = $("qrBox");
 
-                    img.alt = "WhatsApp QR Code";
-                    qrArea.appendChild(img);
-                }
+    if (!image) {
+        box.innerHTML =
+            '<div class="placeholder">WAITING FOR QR CODE...</div>';
+        return;
+    }
 
-                if (data.pairingCode) {
-                    pairingCode.textContent = data.pairingCode;
-                }
+    const img = document.createElement("img");
+    img.src = image;
+    img.alt = "WhatsApp QR Code";
+    box.replaceChildren(img);
+}
 
-            } catch (error) {
-                console.log("Connection status unavailable:", error);
-            }
+async function refreshStatus() {
+    try {
+        const data = await api("/api/baileys/status");
+
+        setStatus(data.status || "DISCONNECTED");
+
+        if (data.status === "CONNECTED") {
+            $("qrBox").innerHTML =
+                '<div class="placeholder">WHATSAPP CONNECTED</div>';
+            $("pairCode").textContent = "CONNECTED";
+        } else if (data.qrDataUrl || data.qrImage) {
+            displayQR(data.qrDataUrl || data.qrImage);
         }
 
-        async function generatePairingCode() {
-            const phone = document.getElementById("phoneNumber").value.trim();
-            const pairingCode = document.getElementById("pairingCode");
-
-            if (!phone) {
-                alert("Please enter your WhatsApp number.");
-                return;
-            }
-
-            pairingCode.textContent = "LOADING...";
-
-            try {
-                const response = await fetch("/api/connect/pairing", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        phone: phone
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || "Pairing code request failed");
-                }
-
-                if (data.pairingCode) {
-                    pairingCode.textContent = data.pairingCode;
-                }
-
-            } catch (error) {
-                pairingCode.textContent = "ERROR";
-                alert(error.message);
-            }
+        if (data.pairingCode && data.status !== "CONNECTED") {
+            $("pairCode").textContent = data.pairingCode;
         }
-    </script>
+
+    } catch (error) {
+        if (error.status === 401) {
+            stopPolling();
+            showPage("authPage");
+            $("authMessage").textContent = "Please login again.";
+        }
+    }
+}
+
+async function startQR() {
+    if (starting) return;
+
+    starting = true;
+    $("connectionMessage").textContent =
+        "Starting WhatsApp connection...";
+
+    displayQR(null);
+    setStatus("CONNECTING");
+
+    try {
+        const data = await api("/api/baileys/start", {
+            method: "POST",
+            body: JSON.stringify({ mode: "qr" })
+        });
+
+        setStatus(data.status || "CONNECTING");
+
+        if (data.qrDataUrl || data.qrImage) {
+            displayQR(data.qrDataUrl || data.qrImage);
+        }
+
+        $("connectionMessage").textContent = "";
+
+    } catch (error) {
+        $("connectionMessage").textContent = error.message;
+        setStatus("DISCONNECTED");
+    } finally {
+        starting = false;
+    }
+
+    await refreshStatus();
+}
+
+async function startPairing() {
+    const phone = $("pairPhone").value.trim();
+
+    if (!/^\+?\d{8,15}$/.test(phone)) {
+        $("connectionMessage").textContent =
+            "Enter a valid phone number with country code.";
+        return;
+    }
+
+    const button = $("pairButton");
+    button.disabled = true;
+    button.textContent = "GENERATING...";
+
+    $("pairCode").textContent = "LOADING...";
+    $("connectionMessage").textContent = "";
+
+    try {
+        const data = await api("/api/baileys/start", {
+            method: "POST",
+            body: JSON.stringify({
+                mode: "pair",
+                phoneNumber: phone.replace(/\D/g, "")
+            })
+        });
+
+        setStatus(data.status || "CONNECTING");
+        $("pairCode").textContent = data.pairingCode || "WAITING...";
+
+        displayQR(null);
+        await refreshStatus();
+
+    } catch (error) {
+        $("pairCode").textContent = "ERROR";
+        $("connectionMessage").textContent = error.message;
+    } finally {
+        button.disabled = false;
+        button.textContent = "GENERATE PAIRING CODE";
+    }
+}
+
+async function disconnectBot() {
+    if (!confirm("Disconnect your WhatsApp account?")) return;
+
+    try {
+        await api("/api/baileys/disconnect", {
+            method: "POST",
+            body: JSON.stringify({})
+        });
+
+        setStatus("DISCONNECTED");
+        displayQR(null);
+        $("pairCode").textContent = "--------";
+        $("connectionMessage").textContent = "WhatsApp disconnected.";
+
+    } catch (error) {
+        $("connectionMessage").textContent = error.message;
+    }
+}
+
+function stopPolling() {
+    if (statusTimer) {
+        clearInterval(statusTimer);
+        statusTimer = null;
+    }
+}
+
+window.addEventListener("beforeunload", stopPolling);
+</script>
 
 </body>
 </html>
